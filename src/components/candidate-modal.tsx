@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from '@radix-ui/react-dialog';
+import { Dialog, DialogContent, DialogTitle, DialogClose } from '@radix-ui/react-dialog';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

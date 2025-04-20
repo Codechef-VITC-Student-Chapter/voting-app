@@ -2,7 +2,7 @@ import React from 'react'
 
 const YouCantLogin = () => {
   return (
-    <div>You Can't Login or Signup</div>
+    <div>You Can&apos;t Login or Signup</div>
   )
 }
 

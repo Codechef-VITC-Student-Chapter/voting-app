@@ -1,4 +1,3 @@
-// components/position-voting.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { createClient } from '../../utils/supabase/client';
@@ -12,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/navigation';
 
 type PositionType = 'president' | 'vp' | 'gensec';
+type VotingColumn = 'has_voted_president' | 'has_voted_vp' | 'has_voted_gensec';
 
 export default function PositionVoting({ 
   position, 
@@ -20,7 +20,7 @@ export default function PositionVoting({
 }: { 
   position: PositionType;
   positionLabel: string;
-  hasVotedColumn: string;
+  hasVotedColumn: VotingColumn;
 }) {
   const [candidates, setCandidates] = useState<{
     id: string;
@@ -50,10 +50,10 @@ export default function PositionVoting({
           .from('users')
           .select(hasVotedColumn)
           .eq('id', user.id)
-          .single();
+          .single<Record<VotingColumn, boolean>>(); // Add generic type
           
         // If already voted, show toast and redirect
-        if (data && data[hasVotedColumn]) {
+        if (data && data[hasVotedColumn as VotingColumn]) {
           toast.error(`You have already voted for ${positionLabel}`);
           router.push('/voting');
           return;
@@ -100,9 +100,9 @@ export default function PositionVoting({
         .from('users')
         .select(hasVotedColumn)
         .eq('id', user.id)
-        .single();
+        .single<Record<VotingColumn, boolean>>(); // Add generic type
         
-      if (checkData && checkData[hasVotedColumn]) {
+      if (checkData && checkData[hasVotedColumn as VotingColumn]) {
         toast.error(`You have already voted for ${positionLabel}`);
         router.push('/voting');
         return;
@@ -118,10 +118,10 @@ export default function PositionVoting({
         
       if (voteError) throw voteError;
       
-      // Update user's voting status
+      // Update user's voting status with type assertion
       const { error: updateError } = await supabase
         .from('users')
-        .update({ [hasVotedColumn]: true })
+        .update({ [hasVotedColumn]: true } as Record<VotingColumn, boolean>)
         .eq('id', user.id);
         
       if (updateError) throw updateError;
