@@ -42,7 +42,7 @@ export default async function PrivatePage() {
               <Link href="/voting">Voting</Link>
             </Button>
             <Button asChild>
-              <Link href="/leaderboard">Leaderboard</Link>
+              <Link href="/results">Results</Link>
             </Button>
             {isAdmin && (
               <Button asChild>
