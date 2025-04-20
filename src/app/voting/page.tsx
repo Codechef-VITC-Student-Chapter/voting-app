@@ -6,6 +6,7 @@ import Navbar from '@/components/navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default function VotingPage() {
   const [votingStatus, setVotingStatus] = useState({
@@ -14,6 +15,18 @@ export default function VotingPage() {
     gensec: false
   });
   const supabase = createClient();
+
+  useEffect(() => {
+  const checkUser = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    
+    if (error || !data?.user) {
+      redirect('/login');
+    }
+  };
+
+  checkUser();
+}, []);
   
   useEffect(() => {
     const fetchVotingStatus = async () => {

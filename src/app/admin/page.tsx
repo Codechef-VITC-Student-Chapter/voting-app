@@ -1,6 +1,6 @@
 // app/admin/page.tsx
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { createClient } from '../../../utils/supabase/client';
 import Navbar from '@/components/navbar';
@@ -24,6 +24,18 @@ export default function AdminPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, handleSubmit, reset } = useForm<CandidateForm>();
   const supabase = createClient();
+
+    useEffect(() => {
+      const checkUser = async () => {
+        const { data, error } = await supabase.auth.getUser();
+        
+        if (error || !data?.user) {
+          redirect('/login');
+        }
+      };
+
+      checkUser();
+    }, []);
 
   const toggleElection = async () => {
     setIsTogglingElection(true);
