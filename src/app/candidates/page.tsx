@@ -77,11 +77,11 @@ export default function PositionVoting() {
               <div className="grid md:grid-cols-[auto_1fr] gap-6 p-6">
                 {/* Candidate Image */}
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="relative aspect-square w-full max-w-[200px] rounded-2xl overflow-hidden border-4 border-primary/20 group-hover:border-primary/40 transition-colors">
+                  <div className="relative flex justify-center w-full rounded-2xl overflow-hidden border-4 border-primary/20 group-hover:border-primary/40 transition-colors">
                     <Image
                       src={imgUrl}
                       alt={candidate.name}
-                      className="object-cover"
+                      className="object-cover object-center"
                       height={150}
                       width={150}
                       priority
