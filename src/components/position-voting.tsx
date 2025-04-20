@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createClient } from '../../utils/supabase/client';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Loader } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 type PositionType = 'president' | 'vp' | 'gensec';
 type VotingColumn = 'has_voted_president' | 'has_voted_vp' | 'has_voted_gensec';
@@ -149,30 +150,48 @@ export default function PositionVoting({
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{positionLabel} Election</h1>
       
-      <RadioGroup value={selectedCandidate} onValueChange={setSelectedCandidate}>
-        {candidates.map(candidate => (
-          <Card key={candidate.id} className="mb-4">
-            <CardHeader className="flex items-center gap-4">
-              <RadioGroupItem value={candidate.id} id={candidate.id} />
-              <Label htmlFor={candidate.id} className="font-semibold text-lg">
-                {candidate.name}
-              </Label>
-              <img 
-                src={supabase.storage.from('candidate_images').getPublicUrl(candidate.image_path).data.publicUrl}
-                alt={candidate.name}
-                className="w-16 h-16 rounded-full object-cover"
-              />
-            </CardHeader>
-            <CardContent>
-              <div className="prose max-w-none">
-                <ReactMarkdown>
-                  {candidate.manifesto}
-                </ReactMarkdown>
+      <RadioGroup 
+      value={selectedCandidate} 
+      onValueChange={setSelectedCandidate} 
+      className="space-y-6"
+    >
+      {candidates.map(candidate => {
+        const imgUrl = supabase.storage.from('candidate_images').getPublicUrl(candidate.image_path).data.publicUrl
+        return (
+          <Card key={candidate.id} className="mb-4 shadow-lg">
+            <div className="flex justify-center flex-row items-center gap-6 p-6">
+              <RadioGroupItem 
+                value={candidate.id} 
+                id={candidate.id} 
+                className="w-8 h-8 border-2 border-primary rounded-full mb-4 transition-all duration-150"
+                />
+              {/* Left: Radio + Photo + Name */}
+              <div className="flex flex-col items-center w-40 min-w-40">
+
+                <Image 
+                  src={imgUrl}
+                  alt={candidate.name}
+                  className="rounded-3xl object-cover border-4 border-primary shadow"
+                  width={150}
+                  height={150}
+                />
+                <Label htmlFor={candidate.id} className="mt-3 font-semibold text-lg text-center">
+                  {candidate.name}
+                </Label>
               </div>
-            </CardContent>
+              {/* Right: Manifesto */}
+              <CardContent className="flex-1 flex items-center">
+                <div className="prose max-w-none w-full text-base">
+                  <ReactMarkdown>
+                    {candidate.manifesto}
+                  </ReactMarkdown>
+                </div>
+              </CardContent>
+            </div>
           </Card>
-        ))}
-      </RadioGroup>
+        )
+      })}
+    </RadioGroup>
       
       <Button 
         onClick={handleSubmitVote} 
