@@ -1,9 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { createClient } from '../../../utils/supabase/client';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import { toast } from 'sonner';
 

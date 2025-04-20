@@ -2,7 +2,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createClient } from '../../../utils/supabase/client';
-import Navbar from '@/components/navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';

@@ -1,6 +1,5 @@
 // app/voting/president/page.tsx
 import PositionVoting from '@/components/position-voting';
-import Navbar from '@/components/navbar';
 
 export default function PresidentVotingPage() {
   return (
