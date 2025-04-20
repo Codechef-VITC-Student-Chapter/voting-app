@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { createClient } from '../../utils/supabase/client';
 import { usePathname } from 'next/navigation';
+import { ModeToggle } from './mode-toggle';
 
 export default function Navbar() {
   const supabase = createClient();
@@ -45,6 +46,7 @@ export default function Navbar() {
         <span className="text-sm">
           {userEmail || "Loading..."}
         </span>
+        <ModeToggle />
         <Button variant="outline" onClick={handleLogout}>
           Logout
         </Button>
