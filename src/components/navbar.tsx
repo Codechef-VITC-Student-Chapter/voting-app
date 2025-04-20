@@ -38,7 +38,7 @@ export default function Navbar() {
           <Button variant={pathname === '/admin' ? 'default' : 'ghost'} asChild>
             <Link href="/admin">Dashboard</Link>
           </Button>
-          <Button variant={pathname === '/voting' ? 'default' : 'ghost'} asChild>
+          <Button variant={pathname.includes('/voting') ? 'default' : 'ghost'} asChild>
             <Link href="/voting">Voting</Link>
           </Button>
           <Button variant={pathname === '/results' ? 'default' : 'ghost'} asChild>
