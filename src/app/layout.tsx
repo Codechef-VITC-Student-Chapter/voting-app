@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CodeChef VITC Voting Portal",
   description: "Voting portal for CodeChef VITC",
+  icons:"/voting-box.png"
 };
 
 export default function RootLayout({

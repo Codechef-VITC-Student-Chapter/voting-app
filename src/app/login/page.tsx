@@ -9,6 +9,7 @@ import { H1 } from '@/components/ui/h1';
 import { FlickeringGrid } from '@/components/flickering-grid';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
@@ -135,6 +136,11 @@ export default function LoginPage() {
           </form>
         </CardDescription>
       </Card>
+      <Button variant="link" className='text-2xl font-bold z-50'>
+        <Link href="/candidates">
+          View Candidates
+        </Link>
+      </Button>
     </div>
   );
 }

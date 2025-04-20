@@ -14,6 +14,7 @@ export default function VotingPage() {
     vp: false,
     gensec: false
   });
+  const [votingStatusLoading, setVotingStatusLoading] = useState(true);
   const supabase = createClient();
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function VotingPage() {
             vp: data.has_voted_vp,
             gensec: data.has_voted_gensec
           });
+          setVotingStatusLoading(false);
         }
       }
     };
@@ -62,8 +64,8 @@ export default function VotingPage() {
               <h2 className="text-xl font-semibold mb-4">Presidential Election</h2>
               <p className="mb-4">Cast your vote for the position of President</p>
               <Button asChild disabled={votingStatus.president}>
-                <Link href="/voting/president">
-                  {votingStatus.president ? 'Vote Submitted' : 'Vote Now'}
+                <Link href={!votingStatus.president ? "/voting/president" : '/voting'}>
+                  {votingStatusLoading && !votingStatus.president ? 'Fetching Status...' : votingStatus.president ? 'Vote Submitted' : 'Vote Now'}
                 </Link>
               </Button>
             </CardContent>
@@ -74,8 +76,8 @@ export default function VotingPage() {
               <h2 className="text-xl font-semibold mb-4">Vice President Election</h2>
               <p className="mb-4">Cast your vote for the position of Vice President</p>
               <Button asChild disabled={votingStatus.vp}>
-                <Link href="/voting/vp">
-                  {votingStatus.vp ? 'Vote Submitted' : 'Vote Now'}
+                <Link href={!votingStatus.vp ? "/voting/vp" : '/voting'}>
+                  {votingStatusLoading && !votingStatus.vp ? 'Fetching Status...' : votingStatus.vp ? 'Vote Submitted' : 'Vote Now'}
                 </Link>
               </Button>
             </CardContent>
@@ -86,8 +88,8 @@ export default function VotingPage() {
               <h2 className="text-xl font-semibold mb-4">General Secretary Election</h2>
               <p className="mb-4">Cast your vote for the position of General Secretary</p>
               <Button asChild disabled={votingStatus.gensec}>
-                <Link href="/voting/gensec">
-                  {votingStatus.gensec ? 'Vote Submitted' : 'Vote Now'}
+                <Link href={!votingStatus.gensec ? "/voting/gensec" : '/voting'}>
+                  {votingStatusLoading && !votingStatus.gensec ? 'Fetching Status...' : votingStatus.gensec ? 'Vote Submitted' : 'Vote Now'}
                 </Link>
               </Button>
             </CardContent>

@@ -1,4 +1,3 @@
-// components/navbar.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -19,9 +18,10 @@ export default function Navbar() {
       const { data, error } = await supabase.auth.getUser();
       if (!error && data?.user) {
         setUserEmail(data.user.email!);
+      } else {
+        setUserEmail(null);
       }
     };
-    
     fetchUser();
   }, [supabase]);
 
@@ -30,30 +30,53 @@ export default function Navbar() {
     window.location.href = '/login';
   };
 
+  // Links for logged in users
+  const loggedInLinks = (
+    <>
+      <Button variant={pathname === '/admin' ? 'default' : 'ghost'} asChild>
+        <Link href="/admin">Dashboard</Link>
+      </Button>
+      <Button variant={pathname.includes('/voting') ? 'default' : 'ghost'} asChild>
+        <Link href="/voting">Voting</Link>
+      </Button>
+      <Button variant={pathname === '/results' ? 'default' : 'ghost'} asChild>
+        <Link href="/results">Results</Link>
+      </Button>
+      <Button variant={pathname === '/candidates' ? 'default' : 'ghost'} asChild>
+        <Link href="/candidates">Candidates</Link>
+      </Button>
+    </>
+  );
+
+  // Links for guests (not logged in)
+  const guestLinks = (
+    <>
+      <Button variant={pathname === '/login' ? 'default' : 'ghost'} asChild>
+        <Link href="/login">Login</Link>
+      </Button>
+      <Button variant={pathname === '/candidates' ? 'default' : 'ghost'} asChild>
+        <Link href="/candidates">Candidates</Link>
+      </Button>
+    </>
+  );
+
   return (
     <nav className="border-b p-4">
       {/* Desktop Nav */}
       <div className="hidden md:flex justify-between items-center">
         <div className="flex gap-4">
-          <Button variant={pathname === '/admin' ? 'default' : 'ghost'} asChild>
-            <Link href="/admin">Dashboard</Link>
-          </Button>
-          <Button variant={pathname.includes('/voting') ? 'default' : 'ghost'} asChild>
-            <Link href="/voting">Voting</Link>
-          </Button>
-          <Button variant={pathname === '/results' ? 'default' : 'ghost'} asChild>
-            <Link href="/results">Results</Link>
-          </Button>
+          {userEmail ? loggedInLinks : guestLinks}
         </div>
-        
         <div className="flex items-center gap-4">
-          <span className="text-sm truncate max-w-[160px]">
-            {userEmail || "Loading..."}
-          </span>
+          {userEmail && (
+            <span className="text-sm truncate max-w-[160px]">{userEmail}</span>
+          )}
           <ModeToggle />
-          <Button variant="outline" onClick={handleLogout}>
-            Logout
-          </Button>
+          {userEmail && (
+            <Button variant="outline" onClick={handleLogout}>
+              Logout
+            </Button>
+          )}
         </div>
       </div>
 
@@ -67,44 +90,27 @@ export default function Navbar() {
         >
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>
-        
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <Button variant="outline" size="sm" onClick={handleLogout}>
-            Logout
-          </Button>
+          {userEmail && (
+            <Button variant="outline" size="sm" onClick={handleLogout}>
+              Logout
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden mt-4 space-y-2">
-          <Button
-            variant={pathname === '/admin' ? 'default' : 'ghost'}
-            className="w-full justify-start"
-            asChild
-          >
-            <Link href="/admin">Dashboard</Link>
-          </Button>
-          <Button
-            variant={pathname === '/voting' ? 'default' : 'ghost'}
-            className="w-full justify-start"
-            asChild
-          >
-            <Link href="/voting">Voting</Link>
-          </Button>
-          <Button
-            variant={pathname === '/results' ? 'default' : 'ghost'}
-            className="w-full justify-start"
-            asChild
-          >
-            <Link href="/results">Results</Link>
-          </Button>
-          <div className="pt-4 border-t mt-4">
-            <span className="text-sm font-medium px-4">
-              {userEmail || "Loading..."}
-            </span>
-          </div>
+          {(userEmail ? loggedInLinks : guestLinks)}
+          {userEmail && (
+            <div className="pt-4 border-t mt-4">
+              <span className="text-sm font-medium px-4">
+                {userEmail}
+              </span>
+            </div>
+          )}
         </div>
       )}
     </nav>
