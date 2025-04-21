@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { createClient } from '../../../utils/supabase/client';
 import { H1 } from '@/components/ui/h1';
 import { FlickeringGrid } from '@/components/flickering-grid';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const supabase = createClient();
 
@@ -101,16 +102,32 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isPending}
             />
-            <Label htmlFor="password">Password:</Label>
-            <Input 
-              id="password" 
-              name="password" 
-              type="password" 
-              required 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isPending}
-            />
+            <div className="relative space-y-4">
+              <Label htmlFor="password">Password:</Label>
+              <Input 
+                id="password" 
+                name="password" 
+                type={showPassword ? 'text' : 'password'} 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isPending}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-8 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <Eye className="h-5 w-5 text-muted-foreground" />
+                )}
+              </Button>
+            </div>
             <div className='gap-5 flex justify-end'>
               <Button 
                 type="button"
