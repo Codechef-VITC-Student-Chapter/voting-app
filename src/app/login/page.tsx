@@ -32,7 +32,6 @@ export default function LoginPage() {
     checkAuth();
   }, [supabase]);
 
-  // --- Implement login and signup ---
   const login = async () => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -56,7 +55,6 @@ export default function LoginPage() {
       toast.success('Signup successful! Please check your email for confirmation.');
     }
   };
-  // -----------------------------------
 
   const handleSubmit = (action: () => Promise<void>) => {
     startTransition(async () => {
@@ -89,7 +87,7 @@ export default function LoginPage() {
       <div className='z-50 text-center'>
         <H1>CodeChef VITC Voting Portal</H1>
       </div>
-      <Card className='p-4 w-[30%] z-50'>
+      <Card className='p-4 w-[80%] sm:w-[70%] md:w-[50%] lg:w-[40%] xl:w-[30%] z-50'>
         <CardTitle>Login</CardTitle>
         <CardDescription>
           <form className='flex flex-col gap-4' onSubmit={e => e.preventDefault()}>

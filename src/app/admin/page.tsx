@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { redirect } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 type CandidateForm = {
   name: string;
@@ -19,57 +20,44 @@ type CandidateForm = {
 };
 
 export default function AdminPage() {
-  const [isElectionActive, setIsElectionActive] = useState(false);
-  const [isTogglingElection, setIsTogglingElection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, handleSubmit, reset } = useForm<CandidateForm>();
   const supabase = createClient();
+  const [isElectionActive, setIsElectionActive] = useState(false);
+  const [isTogglingElection, setIsTogglingElection] = useState(false);
 
-    useEffect(() => {
-      const checkUser = async () => {
-        const { data, error } = await supabase.auth.getUser();
-        
-        if (error || !data?.user) {
-          redirect('/login');
-        }
-      };
+  useEffect(() => {
+    const fetchElectionStatus = async () => {
+      const { data, error } = await supabase
+        .from('voting_status')
+        .select('is_active')
+        .single();
+  
+      if (!error) {
+        setIsElectionActive(data.is_active);
+      }
+    };
 
-      checkUser();
-    }, []);
-
-  const toggleElection = async () => {
-    setIsTogglingElection(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      const { data: userData } = await supabase
+    const checkAdminAccess = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        redirect('/login');
+      }
+      const { data: userData, error: roleError } = await supabase
         .from('users')
         .select('role')
-        .eq('id', user?.id)
+        .eq('id', user.id)
         .single();
-
-      if (userData?.role !== 'admin') {
+  
+      if (roleError || userData?.role !== 'admin') {
         toast.error('Unauthorized access');
-        return;
+        redirect('/'); 
       }
-
-      const { data, error } = await supabase
-        .from('voting_sessions')
-        .upsert({ end_time: isElectionActive ? null : 'now()' })
-        .select()
-        .maybeSingle();
-
-      if (error) throw error;
-
-      setIsElectionActive(data ? !data.end_time : false);
-      toast.success(`Election ${data?.end_time ? 'ended' : 'started'} successfully`);
-    } catch (error) {
-      toast.error('Failed to update election status');
-      console.error('Election toggle error:', error);
-    } finally {
-      setIsTogglingElection(false);
-    }
-  };
+      fetchElectionStatus();  
+    };
+  
+    checkAdminAccess();
+  }, [supabase.auth]);
 
   const onSubmit = async (data: CandidateForm) => {
     setIsSubmitting(true);
@@ -127,63 +115,110 @@ export default function AdminPage() {
     }
   };
 
+  const toggleElection = async () => {
+    setIsTogglingElection(true);
+    try {
+      const { data, error } = await supabase
+        .from('voting_status')
+        .update({ is_active: !isElectionActive })
+        .eq('id', true)
+        .select()
+        .single();
+  
+      if (error) throw error;
+  
+      setIsElectionActive(data.is_active);
+      toast.success(
+        data.is_active 
+          ? 'Election started! Voters can now submit ballots' 
+          : 'Election ended successfully - Results are now final'
+      );
+    } catch (error) {
+      toast.error(`Failed to ${isElectionActive ? 'end' : 'start'} election`);
+      console.error('Election toggle error:', error);
+    } finally {
+      setIsTogglingElection(false);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
-      
       <div className="max-w-4xl mx-auto p-6">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Election Control Panel</h1>
-          <Button 
-            onClick={toggleElection}
-            variant={isElectionActive ? 'destructive' : 'default'}
-            disabled={isTogglingElection}
-          >
-            {isTogglingElection ? (
-              <>
-                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : isElectionActive ? 'End Election' : 'Start Election'}
-          </Button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Label>Candidate Name</Label>
-            <Input {...register('name')} required disabled={isSubmitting} />
-          </div>
-          
-          <div>
-            <Label>Profile Image</Label>
-            <Input 
-              type="file" 
-              accept="image/*"
-              {...register('image')} 
-              required 
-              disabled={isSubmitting}
-            />
-          </div>
-          
-          <div>
-            <Label>Manifesto (Markdown)</Label>
-            <Textarea
-              {...register('manifesto')}
-              required
-              className="min-h-[200px] font-mono"
-              disabled={isSubmitting}
-            />
-          </div>
-          
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                Adding Candidate...
-              </>
-            ) : 'Add Candidate'}
-          </Button>
-        </form>
+        {/* Toggling election */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Election Status</CardTitle>
+            <CardDescription>
+              {isElectionActive 
+                ? "Voting is currently active" 
+                : "Voting is not active"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={toggleElection}
+              variant={isElectionActive ? 'destructive' : 'default'}
+              disabled={isTogglingElection}
+            >
+              {isTogglingElection ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : isElectionActive ? 'End Election' : 'Start Election'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Adding a candidate */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Add Candidate</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className='space-y-4'>
+                <Label>Candidate Name</Label>
+                <Input {...register('name')} required disabled={isSubmitting} />
+              </div>
+              
+              <div className='space-y-4'>
+                <Label>Profile Image</Label>
+                <Input 
+                  type="file" 
+                  accept="image/*"
+                  {...register('image')} 
+                  required 
+                  disabled={isSubmitting}
+                />
+              </div>
+              
+              <div className='space-y-4'>
+                <Label>Manifesto (Markdown)</Label>
+                <Textarea
+                  {...register('manifesto')}
+                  required
+                  className="min-h-[200px] font-mono"
+                  disabled={isSubmitting}
+                />
+              </div>
+              
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    Adding Candidate...
+                  </>
+                ) : 'Add Candidate'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

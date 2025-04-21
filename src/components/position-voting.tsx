@@ -159,7 +159,7 @@ export default function PositionVoting({
         const imgUrl = supabase.storage.from('candidate_images').getPublicUrl(candidate.image_path).data.publicUrl
         return (
           <Card key={candidate.id} className="mb-4 shadow-lg">
-            <div className="flex justify-center flex-row items-center gap-6 p-6">
+            <div className="flex flex-col justify-center md:flex-row items-center gap-6 p-6">
               <RadioGroupItem 
                 value={candidate.id} 
                 id={candidate.id} 

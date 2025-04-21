@@ -3,8 +3,8 @@ import React from 'react'
 
 const ResultsPage = () => {
   return (
-    <div className='flex flex-col items-center justify-center min-h-[80vh] text-5xl font-bold gap-4'>
-      <div>
+    <div className='flex flex-col items-center justify-center min-h-[80vh] gap-4'>
+      <div className=' text-xl sm:text-3xl md:text-5xl text-center font-bold'>
         Did you really think we would show you the results????? 😂
       </div>
       <Image 

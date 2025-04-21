@@ -4,8 +4,10 @@ import React, { ReactNode } from 'react'
 const layout = ({children}:{children:ReactNode}) => {
   return (
     <div>
-        <Navbar />
+      <Navbar />
+      <div className='flex justify-center items-center'>
         {children}
+      </div>
     </div>
   )
 }

@@ -8,12 +8,13 @@ import { logout } from './actions'
 export default async function PrivatePage() {
   const supabase = await createClient()
   const { data, error } = await supabase.auth.getUser()
-  
+  console.log('User data:', data)
+  console.log('Error:', error)
   if (error || !data?.user) {
     redirect('/login')
   }
 
-  const isAdmin = data.user.email === "akkilalagar05@gmail.com"
+  const isAdmin = data.user.email === "akkilalagar05@gmail.com" || data.user.email === "mithunbalaji.v2022@vitstudent.ac.in"
 
   return (
     <main className="flex min-h-screen items-center justify-center">
