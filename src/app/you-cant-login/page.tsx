@@ -9,7 +9,7 @@ const YouCantLogin = () => {
         <Ban className="w-16 h-16 text-red-500 mb-4" />
         <h1 className="text-2xl font-bold text-red-600 mb-2">Access Denied</h1>
         <p className="text-gray-700 text-center mb-4">
-          Sorry, you can't login or signup with this email address.
+          Sorry, you can&apos;t login or signup with this email address.
         </p>
         <p className="text-gray-500 text-center text-sm">
           If you believe this is a mistake, please contact the administrator or check if your email is on the allowed list.
